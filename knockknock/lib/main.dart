@@ -12,7 +12,7 @@ import 'package:knockknock/senior/screen/record_senior.dart'; //record_administe
 import 'package:knockknock/senior/screen/response_2_senior.dart';
 import 'package:knockknock/senior/screen/response_senior.dart';
 import 'package:knockknock/senior/component/my_bottomnavigationbar.dart';
-
+import 'package:knockknock/manager/manager/nav1_message/m_chatscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,8 +20,10 @@ import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  runApp(const KnockKnock());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(KnockKnock());
 }
 
 class KnockKnock extends StatefulWidget {
