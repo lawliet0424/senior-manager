@@ -7,17 +7,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
 class ManagerChatscreen extends StatefulWidget {
-  const ManagerChatscreen({super.key});
+  final String managerid;
+  final String seniorid;
+  final String seniorname;
+
+  const ManagerChatscreen({
+    Key? key,
+    required this.managerid,
+    required this.seniorid,
+    required this.seniorname,
+  }) : super(key: key);
 
   @override
   State<ManagerChatscreen> createState() => _ManagerChatscreenState();
 }
 
 class _ManagerChatscreenState extends State<ManagerChatscreen> {
-  String managerid = "OI75iw9Z1oTlV2EyyL8C"; //임시로, 관리자 uid를 넣음
-  String seniorid = "Y3wkpcrAscFryYYo4UOn"; //임시로, 돌봄 대상자 uid를 넣음
-  String seniorname = "김철수"; // 임시로, 돌봄 대상자 이름을 넣음
-
   late ScrollController _scrollController;
   bool isWarning = false;
 
@@ -43,9 +48,9 @@ class _ManagerChatscreenState extends State<ManagerChatscreen> {
     */
     QuerySnapshot checkedSnapshot = await FirebaseFirestore.instance
         .collection('message')
-        .doc(managerid)
+        .doc(widget.managerid)
         .collection('senior')
-        .doc(seniorid)
+        .doc(widget.seniorid)
         .collection('checked')
         .orderBy('date', descending: false)
         .get();
@@ -67,7 +72,7 @@ class _ManagerChatscreenState extends State<ManagerChatscreen> {
       timestamps.add(
           DateFormat('yyyy년 MM월 dd일 HH시 mm분').format(data['date'].toDate()));
       //메세지의 작성자가 '나(managerid)'인지 '상대쪽(seniorid)'인지 T/F로 구분하기
-      if (data['writer_uid'] == managerid) {
+      if (data['writer_uid'] == widget.managerid) {
         //작성자가 '나'인 경우
         isMe.add(true);
       } else {
@@ -83,9 +88,9 @@ class _ManagerChatscreenState extends State<ManagerChatscreen> {
     */
     QuerySnapshot nowSnapshot = await FirebaseFirestore.instance
         .collection('message')
-        .doc(managerid)
+        .doc(widget.managerid)
         .collection('senior')
-        .doc(seniorid)
+        .doc(widget.seniorid)
         .collection('now')
         .orderBy('date', descending: false)
         .get();
@@ -123,8 +128,11 @@ class _ManagerChatscreenState extends State<ManagerChatscreen> {
       isReply.add(nowState);
     });
 
-    //답장을 받지 못한 경우, 색깔을 바꿔주는 함수 실행
+    //최신 데이터 반영 & now messages에 대해 색깔을 바꿔주는 함수 실행
     setState(() {
+      widget.seniorname;
+      widget.managerid;
+      widget.seniorid;
       this.messages = messages;
       this.timestamps = timestamps;
       this.isMe = isMe;
@@ -197,7 +205,7 @@ class _ManagerChatscreenState extends State<ManagerChatscreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
                 child: OtherSideChatBox(
-                  name: seniorname,
+                  name: widget.seniorname,
                   message: messages[index],
                   time: timestamps[index].split(' ').sublist(3).join(' '),
                   profile: "assets/images/user_profile.jpg",
@@ -211,4 +219,3 @@ class _ManagerChatscreenState extends State<ManagerChatscreen> {
   }
 }
 
-}
